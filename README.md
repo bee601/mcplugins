@@ -1,4 +1,4 @@
-# Plugin Atlas
+# Plugin List
 
 A dark, animated Minecraft plugin discovery website built as a normal static GitHub repo. It searches live results from Modrinth and Spigot, lets you filter by source, platform, version, and price, and supports bookmark saving for later.
 

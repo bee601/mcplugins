@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="A focused plugin discovery workspace for Minecraft server owners." />
-  <title>Plugin Atlas | Minecraft plugin discovery</title>
+  <title>Plugin List | Minecraft plugin discovery</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -14,17 +14,17 @@
 <body class="dark">
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="Plugin Atlas home">
+      <a class="brand" href="#explore" aria-label="Plugin List home">
         <span class="brand-mark"><i data-lucide="scan-search"></i></span>
-        <span>PLUGIN <em>ATLAS</em></span>
+        <span class="brand-copy"><span>PLUGIN <em>LIST</em></span><small>PLUGIN DISCOVERY</small></span>
       </a>
       <nav class="topnav" aria-label="Main navigation">
-        <a class="active" href="#catalog">Explore</a>
+        <a class="active" data-view="catalog" href="#explore">Explore</a>
         <a href="#sources">Sources</a>
         <a href="#about">How it works</a>
       </nav>
       <div class="top-actions">
-        <button class="icon-btn" id="savedButton" title="View saved plugins" aria-label="View saved plugins"><i data-lucide="bookmark"></i><span id="savedCount">0</span></button>
+        <button class="icon-btn" id="savedButton" title="Open bookmarks" aria-label="Open bookmarks"><i data-lucide="bookmark"></i><span id="savedCount">0</span></button>
       </div>
     </header>
 
@@ -36,8 +36,9 @@
           <p class="hero-subtitle">Search the best Minecraft plugin marketplaces in one focused workspace.</p>
         </div>
         <div class="hero-note">
-          <span class="note-index">01 / 03</span>
-          <p>Search live marketplace data, then narrow it down by compatibility, source, price, and momentum.</p>
+          <div class="hero-note-top"><span class="note-index">LIVE INDEX</span><span class="hero-note-status"><i></i> ONLINE</span></div>
+          <strong>Two ecosystems.<br />One focused search.</strong>
+          <p>Compare compatibility, source, price, and momentum without leaving the directory.</p>
         </div>
       </section>
 
@@ -118,7 +119,7 @@
         </label>
       </section>
 
-      <div class="source-strip" id="sources">
+      <div class="source-strip" id="indexedSources">
         <span>INDEXED SOURCES</span>
         <div class="source-logos">
           <button class="source-tab active" data-source="all"><b>ALL</b><small>12.8k</small></button>
@@ -137,7 +138,7 @@
             <div class="mini-bars" aria-hidden="true"><i style="height: 35%"></i><i style="height: 48%"></i><i style="height: 42%"></i><i style="height: 68%"></i><i style="height: 54%"></i><i style="height: 82%"></i><i style="height: 96%"></i></div>
           </div>
           <div class="rail-card tip-card">
-            <span class="tip-label">ATLAS TIP</span>
+            <span class="tip-label">LIST TIP</span>
             <i data-lucide="quote"></i>
             <p>Start with your server version, then narrow down by platform. Compatibility saves the most time.</p>
           </div>
@@ -146,10 +147,25 @@
       <div class="load-more-wrap" id="loadMoreWrap" hidden>
         <button class="load-more" id="loadMore">Load more live results <i data-lucide="arrow-down"></i></button>
       </div>
+      <section class="info-page" id="sources" hidden>
+        <p class="section-kicker">THE INDEX</p>
+        <h2>Sources</h2>
+        <p class="info-lede">Plugin List brings live marketplace data into one place, with each result still linked to its original source.</p>
+        <div class="info-grid">
+          <article class="info-block"><span class="source-dot modrinth"></span><h3>Modrinth</h3><p>Open-source projects, plugin galleries, version metadata, downloads, and project links from the Modrinth API.</p><a href="https://modrinth.com/" target="_blank" rel="noreferrer">Visit Modrinth <i data-lucide="arrow-up-right"></i></a></article>
+          <article class="info-block"><span class="source-dot spigot"></span><h3>Spigot</h3><p>Spigot resources, premium status, exact prices where available, descriptions, images, and community links.</p><a href="https://www.spigotmc.org/resources/" target="_blank" rel="noreferrer">Visit Spigot <i data-lucide="arrow-up-right"></i></a></article>
+        </div>
+      </section>
+      <section class="info-page" id="about" hidden>
+        <p class="section-kicker">HOW IT WORKS</p>
+        <h2>Find with intent.</h2>
+        <p class="info-lede">Search naturally, narrow the results, and open the original project page when you are ready to download.</p>
+        <div class="process-list"><div><strong>01</strong><span><b>Search</b>Use words from the plugin name, description, platform, edition, or version.</span></div><div><strong>02</strong><span><b>Filter</b>Choose a source, platform, game edition, price, or Minecraft version.</span></div><div><strong>03</strong><span><b>Save</b>Use the bookmark icon to keep plugins in your private saved drawer.</span></div></div>
+      </section>
     </main>
 
-    <footer id="about">
-      <span>PLUGIN ATLAS / DISCOVER WITH INTENT</span>
+    <footer>
+      <span>PLUGIN LIST / DISCOVER WITH INTENT</span>
       <span>Sources sync every 6 hours <i data-lucide="refresh-cw"></i></span>
     </footer>
   </div>
@@ -159,6 +175,10 @@
     <button class="drawer-close" id="drawerClose" title="Close details" aria-label="Close details"><i data-lucide="x"></i></button>
     <div id="drawerContent"></div>
   </aside>
+  <div class="image-lightbox" id="imageLightbox" hidden role="dialog" aria-modal="true" aria-label="Full-size plugin image">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close full-size image"><i data-lucide="x"></i></button>
+    <img id="lightboxImage" alt="Full-size plugin preview" />
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
