@@ -54,7 +54,7 @@ body.dark .icon-btn span { color: #0c120b; background: #d5ff5f; }
 body.dark .eyebrow, body.dark .hero-note p, body.dark .source-strip > span { color: #9a96aa; }
 body.dark .eyebrow .pulse-dot { background: #d5ff5f; box-shadow: 0 0 13px #d5ff5f; }
 body.dark .note-index, body.dark .section-kicker { color: #ffb0f0; }
-body.dark .search-panel { background: rgba(18, 28, 16, .92); border: 1px solid rgba(213, 255, 95, .2); box-shadow: 0 24px 80px rgba(0, 0, 0, .3), 8px 8px 0 rgba(141, 76, 255, .16); }
+body.dark .search-panel { background: rgba(15, 10, 16, .92); border: 1px solid rgba(213, 255, 95, .2); box-shadow: 0 24px 80px rgba(0, 0, 0, .3), 8px 8px 0 rgba(141, 76, 255, .16); }
 body.dark .search-box { background: #182713; border-color: rgba(213, 255, 95, .2); }
 body.dark .search-box:focus-within { border-color: #d5ff5f; box-shadow: 0 0 22px rgba(213, 255, 95, .12); }
 body.dark .search-box svg { color: #ffb0f0; }
@@ -149,7 +149,7 @@ kbd { border: 1px solid #50605b; color: #afbbb5; border-radius: 4px; padding: 2p
 .active-filters-label { color: #9a96aa; font: 700 9px "Space Grotesk", sans-serif; letter-spacing: .13em; margin-right: 3px; }
 .active-filter, .active-clear { display: inline-flex; align-items: center; gap: 7px; border: 1px solid rgba(255, 176, 240, .28); border-radius: 4px; background: rgba(255, 176, 240, .1); color: #ffb0f0; padding: 6px 8px; font-size: 10px; }
 .active-filter svg { width: 12px; height: 12px; }.active-filter:hover { background: rgba(255, 176, 240, .2); }.active-clear { border-color: transparent; background: transparent; color: #ffb0f0; margin-left: auto; }.active-clear:hover { text-decoration: underline; }
-.filters-panel { display: grid; grid-template-columns: 1.3fr 1.3fr .9fr 1fr auto; gap: 23px; padding-top: 24px; margin-top: 8px; border-top: 1px solid #3a4a45; align-items: end; }
+.filters-panel { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 23px; padding-top: 24px; margin-top: 8px; border-top: 1px solid #3a4a45; align-items: end; }
 .filter-group { min-width: 0; }
 .filter-label { display: block; color: #9eaca7; font: 700 10px "Space Grotesk", sans-serif; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 11px; }
 .check-grid { display: flex; gap: 7px; flex-wrap: wrap; }
