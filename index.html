@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A focused plugin discovery workspace for Minecraft server owners." />
+  <title>Plugin Atlas | Minecraft plugin discovery</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="dark">
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Plugin Atlas home">
+        <span class="brand-mark"><i data-lucide="scan-search"></i></span>
+        <span>PLUGIN <em>ATLAS</em></span>
+      </a>
+      <nav class="topnav" aria-label="Main navigation">
+        <a class="active" href="#catalog">Explore</a>
+        <a href="#sources">Sources</a>
+        <a href="#about">How it works</a>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-btn" id="savedButton" title="View saved plugins" aria-label="View saved plugins"><i data-lucide="bookmark"></i><span id="savedCount">0</span></button>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="pulse-dot"></span> LIVE INDEX / MODRINTH + SPIGOT</p>
+          <h1>Find the right<br /><span>stack.</span></h1>
+          <p class="hero-subtitle">Search the best Minecraft plugin marketplaces in one focused workspace.</p>
+        </div>
+        <div class="hero-note">
+          <span class="note-index">01 / 03</span>
+          <p>Search live marketplace data, then narrow it down by compatibility, source, price, and momentum.</p>
+        </div>
+      </section>
+
+      <section class="search-panel" id="catalog" aria-label="Plugin search">
+        <div class="search-row">
+          <label class="search-box" for="searchInput">
+            <i data-lucide="search"></i>
+            <input id="searchInput" type="search" placeholder="Try: Skript Shop, land claim, economy..." autocomplete="off" />
+            <kbd>/</kbd>
+          </label>
+          <button class="filter-toggle" id="filterToggle"><i data-lucide="sliders-horizontal"></i> Filters <span id="filterCount">0</span></button>
+        </div>
+        <div class="quick-filters" aria-label="Quick filters">
+          <button class="chip active" data-quick="all">All plugins</button>
+          <button class="chip" data-quick="free"><i data-lucide="sparkles"></i> Free to use</button>
+          <button class="chip" data-quick="updated"><i data-lucide="clock-3"></i> Updated this week</button>
+          <button class="chip" data-quick="popular"><i data-lucide="flame"></i> Trending</button>
+          <button class="chip" data-quick="downloads"><i data-lucide="download"></i> Most downloaded</button>
+          <button class="chip" data-quick="skript"><i data-lucide="code-2"></i> Skript resources</button>
+        </div>
+        <div class="active-filters" id="activeFilters" hidden aria-live="polite"></div>
+        <div class="filters-panel" id="filtersPanel" hidden>
+          <div class="filter-group">
+            <span class="filter-label">Source</span>
+            <div class="check-grid" id="sourceFilters"></div>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Platform</span>
+            <div class="check-grid" id="platformFilters"></div>
+          </div>
+          <div class="filter-group compact-group">
+            <span class="filter-label">Price</span>
+            <div class="check-grid" id="priceFilters"></div>
+          </div>
+          <div class="filter-group compact-group">
+            <label class="filter-label" for="versionFilter">Minecraft version</label>
+            <select id="versionFilter">
+              <option value="all">Any version</option>
+              <option value="1.21">1.21.x</option>
+              <option value="1.20">1.20.x</option>
+              <option value="1.19">1.19.x</option>
+              <option value="1.18">1.18.x</option>
+            </select>
+          </div>
+          <button class="clear-filters" id="clearFilters">Clear all</button>
+        </div>
+      </section>
+
+      <section class="catalog-header">
+        <div>
+          <p class="section-kicker">CURATED INDEX</p>
+          <h2 id="viewTitle">Plugin directory <span id="resultCount">0 results</span></h2>
+        </div>
+        <label class="sort-control">Sort by
+          <select id="sortSelect">
+            <option value="relevance">Relevance</option>
+            <option value="downloads">Most downloads</option>
+            <option value="popular">Most popular</option>
+            <option value="updated">Recently updated</option>
+            <option value="price-low">Price: low to high</option>
+          </select>
+          <i data-lucide="chevron-down"></i>
+        </label>
+      </section>
+
+      <div class="source-strip" id="sources">
+        <span>INDEXED SOURCES</span>
+        <small class="live-status" id="liveStatus">Connecting to live sources...</small>
+          <div class="source-logos">
+          <button class="source-tab active" data-source="all"><b>ALL</b><small>12.8k</small></button>
+          <button class="source-tab" data-source="Modrinth"><b><span class="source-dot modrinth"></span>MODRINTH</b><small>4.2k</small></button>
+          <button class="source-tab" data-source="Spigot"><b><span class="source-dot spigot"></span>SPIGOT</b><small>4.8k</small></button>
+        </div>
+      </div>
+
+      <section class="results-layout">
+        <div class="results-grid" id="resultsGrid"></div>
+        <aside class="side-rail">
+          <div class="rail-card pulse-card">
+            <div class="rail-card-top"><span class="live-dot"></span><span>LIVE PULSE</span><i data-lucide="activity"></i></div>
+            <strong>2.4k</strong>
+            <p>plugin updates in the last 7 days</p>
+            <div class="mini-bars" aria-hidden="true"><i style="height: 35%"></i><i style="height: 48%"></i><i style="height: 42%"></i><i style="height: 68%"></i><i style="height: 54%"></i><i style="height: 82%"></i><i style="height: 96%"></i></div>
+          </div>
+          <div class="rail-card tip-card">
+            <span class="tip-label">ATLAS TIP</span>
+            <i data-lucide="quote"></i>
+            <p>Start with your server version, then narrow down by platform. Compatibility saves the most time.</p>
+          </div>
+        </aside>
+      </section>
+      <div class="load-more-wrap" id="loadMoreWrap" hidden>
+        <button class="load-more" id="loadMore">Load more live results <i data-lucide="arrow-down"></i></button>
+      </div>
+    </main>
+
+    <footer id="about">
+      <span>PLUGIN ATLAS / DISCOVER WITH INTENT</span>
+      <span>Sources sync every 6 hours <i data-lucide="refresh-cw"></i></span>
+    </footer>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+  <aside class="details-drawer" id="detailsDrawer" aria-labelledby="drawerTitle" aria-hidden="true">
+    <button class="drawer-close" id="drawerClose" title="Close details" aria-label="Close details"><i data-lucide="x"></i></button>
+    <div id="drawerContent"></div>
+  </aside>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
