@@ -62,19 +62,19 @@
         <div class="filters-panel" id="filtersPanel" hidden>
           <div class="filter-group">
             <span class="filter-label">Source</span>
-            <div class="check-grid" id="sourceFilters"></div>
+            <select id="sourceFilters" aria-label="Filter by source"></select>
           </div>
           <div class="filter-group">
             <span class="filter-label">Platform</span>
-            <div class="check-grid" id="platformFilters"></div>
+            <select id="platformFilters" aria-label="Filter by platform"></select>
           </div>
           <div class="filter-group compact-group">
             <span class="filter-label">Price</span>
-            <div class="check-grid" id="priceFilters"></div>
+            <select id="priceFilters" aria-label="Filter by price"></select>
           </div>
           <div class="filter-group">
             <span class="filter-label">Game edition</span>
-            <div class="check-grid" id="editionFilters"></div>
+            <select id="editionFilters" aria-label="Filter by game edition"></select>
           </div>
           <div class="filter-group compact-group">
             <label class="filter-label" for="versionFilter">Minecraft version</label>
@@ -96,7 +96,6 @@
               <option value="1.8">1.8.x</option>
               <option value="1.7">1.7.x</option>
             </select>
-            <small class="filter-hint">Time labels are relative to now: “today” means within 24 hours, “yesterday” means within 48 hours.</small>
           </div>
           <button class="clear-filters" id="clearFilters">Clear all</button>
         </div>

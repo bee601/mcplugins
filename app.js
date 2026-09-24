@@ -22,13 +22,16 @@ function buildFilterOptions() {
     priceFilters: ['Free', 'Paid']
   };
   Object.entries(options).forEach(([id, values]) => {
-    $(`#${id}`).innerHTML = values.map((value) => `<label class="check-option"><input type="checkbox" value="${value}" data-filter="${id.replace('Filters', '')}" />${value}</label>`).join('');
+    const select = $(`#${id}`);
+    select.innerHTML = `<option value="all">Any ${id.replace('Filters', '').replace('edition', 'game edition')}</option>${values.map((value) => `<option value="${value}">${value}</option>`).join('')}`;
+    select.dataset.filter = id.replace('Filters', '');
+    select.addEventListener('change', (event) => {
+      const collection = state[`${event.target.dataset.filter}s`];
+      collection.clear();
+      if (event.target.value !== 'all') collection.add(event.target.value);
+      loadPlugins(true);
+    });
   });
-  $$('[data-filter]').forEach((input) => input.addEventListener('change', (event) => {
-    const collection = state[`${event.target.dataset.filter}s`];
-    event.target.checked ? collection.add(event.target.value) : collection.delete(event.target.value);
-    loadPlugins(true);
-  }));
 }
 
 function bindEvents() {
@@ -92,7 +95,7 @@ async function fetchSpigot(page) {
   const response = await fetch(`https://api.spiget.org/v2/${route}?size=50&page=${page}&sort=-downloads`);
   if (!response.ok) throw new Error('Spigot is unavailable right now');
   const data = await response.json();
-  return data.map((item) => ({ id: `spigot-${item.id}`, name: item.name, creator: item.author?.name || 'Unknown creator', source: 'Spigot', sources: ['Spigot'], platform: ['Spigot', 'Paper'], editions: detectPluginEditions(['Spigot', 'Paper'], [item.tag || 'Minecraft plugin']), versions: (item.testedVersions || []).map((version) => version.split('.').slice(0, 2).join('.')), price: item.premium ? 'Paid' : 'Free', icon: (item.name || 'S')[0].toUpperCase(), iconUrl: item.icon?.url ? `https://www.spigotmc.org/${item.icon.url}` : '', iconClass: 'icon-blue', category: item.tag || 'Minecraft plugin', downloads: formatNumber(item.downloads || 0), downloadValue: item.downloads || 0, downloadSources: [{ source: 'Spigot', value: item.downloads || 0 }], updatedAt: item.updateDate, updated: relativeDate(item.updateDate), age: ageInDays(item.updateDate), popularity: item.rating?.average || item.downloads || 0, description: stripHtml(item.description) || 'Minecraft plugin from the Spigot resource index.', url: `https://www.spigotmc.org/resources/${item.id}/`, links: [{ label: 'Spigot resource', url: `https://www.spigotmc.org/resources/${item.id}/` }, item.links?.R2l0aHVi && { label: 'GitHub', url: item.links.R2l0aHVi }, item.links?.discussion && { label: 'Discussion', url: item.links.discussion }].filter(Boolean) }));
+  return data.map((item) => ({ id: `spigot-${item.id}`, name: item.name, creator: item.author?.name || 'Unknown creator', source: 'Spigot', sources: ['Spigot'], platform: ['Spigot', 'Paper'], editions: detectPluginEditions(['Spigot', 'Paper'], [item.tag || 'Minecraft plugin']), versions: (item.testedVersions || []).map((version) => version.split('.').slice(0, 2).join('.')), price: item.premium || Number(item.price || item.cost || 0) > 0 ? 'Paid' : 'Free', icon: (item.name || 'S')[0].toUpperCase(), iconUrl: item.icon?.url ? `https://www.spigotmc.org/${item.icon.url}` : '', iconClass: 'icon-blue', category: item.tag || 'Minecraft plugin', downloads: formatNumber(item.downloads || 0), downloadValue: item.downloads || 0, downloadSources: [{ source: 'Spigot', value: item.downloads || 0 }], updatedAt: normalizeTimestamp(item.updateDate), updated: relativeDate(item.updateDate), age: ageInDays(item.updateDate), popularity: item.rating?.average || item.downloads || 0, description: stripHtml(item.description) || 'Minecraft plugin from the Spigot resource index.', url: `https://www.spigotmc.org/resources/${item.id}/`, links: [{ label: 'Spigot resource', url: `https://www.spigotmc.org/resources/${item.id}/` }, item.links?.R2l0aHVi && { label: 'GitHub', url: item.links.R2l0aHVi }, item.links?.discussion && { label: 'Discussion', url: item.links.discussion }].filter(Boolean) }));
 }
 
 function platformFromModrinth(item) { const categories = (item.categories || []).map((category) => category.toLowerCase()); const platforms = ['Fabric', 'Quilt', 'Paper', 'Spigot', 'Velocity'].filter((platform) => categories.includes(platform.toLowerCase())); return platforms.length ? platforms : ['Paper']; }
@@ -112,8 +115,9 @@ function detectPluginEditions(platforms = [], categories = []) {
 }
 function stripHtml(value) { return String(value || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').trim(); }
 function formatNumber(value) { if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`; if (value >= 1000) return `${(value / 1000).toFixed(0)}K`; return String(value); }
-function formatExactDate(value) { const time = new Date(value).getTime(); if (!Number.isFinite(time)) return 'Date unavailable'; return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(time)); }
-function ageInDays(value) { const time = new Date(value).getTime(); return Number.isFinite(time) ? Math.max(0, Math.floor((Date.now() - time) / 86400000)) : 999; }
+function normalizeTimestamp(value) { if (typeof value === 'number' && value > 0 && value < 100000000000) return value * 1000; return value; }
+function formatExactDate(value) { const time = new Date(normalizeTimestamp(value)).getTime(); if (!Number.isFinite(time)) return 'Date unavailable'; return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(time)); }
+function ageInDays(value) { const time = new Date(normalizeTimestamp(value)).getTime(); return Number.isFinite(time) ? Math.max(0, Math.floor((Date.now() - time) / 86400000)) : 999; }
 function relativeDate(value) { const days = ageInDays(value); if (days === 0) return 'today'; if (days === 1) return 'yesterday'; if (days < 30) return `${days} days ago`; if (days < 365) return `${Math.floor(days / 30)} months ago`; return 'over a year ago'; }
 function mergePluginResults(items) {
   const merged = new Map();
@@ -201,7 +205,7 @@ function pluginCard(plugin) {
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[character]); }
 function toggleSaved(id) { if (state.saved.has(id)) state.saved.delete(id); else state.saved.add(id); render(); }
 function clearFilters() { state.sources.clear(); state.platforms.clear(); state.editions.clear(); state.prices.clear(); state.version = 'all'; state.quick = 'all'; $('#versionFilter').value = 'all'; $$('.chip').forEach((item) => item.classList.toggle('active', item.dataset.quick === 'all')); $$('.source-tab').forEach((item) => item.classList.toggle('active', item.dataset.source === 'all')); syncCheckboxes(); loadPlugins(true); }
-function syncCheckboxes() { $$('input[data-filter]').forEach((input) => { const target = state[`${input.dataset.filter}s`]; input.checked = target?.has(input.value) || false; }); }
+function syncCheckboxes() { $$('select[data-filter]').forEach((select) => { const target = state[`${select.dataset.filter}s`]; select.value = target?.values().next().value || 'all'; }); }
 function openDrawer(id) {
   const plugin = plugins.find((item) => item.id === id);
   if (!plugin) return;
