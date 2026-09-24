@@ -51,7 +51,7 @@ function bindEvents() {
     syncCheckboxes(); loadPlugins(true);
   }));
   $$('.chip').forEach((chip) => chip.addEventListener('click', () => { state.quick = chip.dataset.quick; if (state.quick === 'skript') { state.search = 'skript'; $('#searchInput').value = 'skript'; } if (state.quick === 'downloads') { state.sort = 'downloads'; $('#sortSelect').value = 'downloads'; } $$('.chip').forEach((item) => item.classList.toggle('active', item === chip)); state.view = 'catalog'; loadPlugins(true); }));
-  $('#savedButton').addEventListener('click', () => { state.view = state.view === 'saved' ? 'catalog' : 'saved'; state.quick = 'all'; $$('.chip').forEach((item) => item.classList.toggle('active', item.dataset.quick === 'all')); render(); toast(state.view === 'saved' ? 'Bookmarks list opened' : 'Live plugin list opened'); });
+  $('#savedButton').addEventListener('click', () => { state.view = state.view === 'saved' ? 'catalog' : 'saved'; state.quick = 'all'; $$('.chip').forEach((item) => item.classList.toggle('active', item.dataset.quick === 'all')); render(); });
   $('#drawerClose').addEventListener('click', closeDrawer);
   $('#drawerBackdrop').addEventListener('click', closeDrawer);
   document.addEventListener('keydown', (event) => { if (event.key === '/' && document.activeElement.tagName !== 'INPUT') { event.preventDefault(); $('#searchInput').focus(); } if (event.key === 'Escape') closeDrawer(); });
@@ -63,7 +63,6 @@ async function loadPlugins(reset) {
   if (reset) { plugins = []; nextPage = 0; requestId += 1; renderLoading(); }
   const currentRequest = requestId;
   loading = true;
-  updateLiveStatus(reset ? 'Connecting to live sources...' : 'Loading more live results...');
   const selectedSources = state.sources.size ? [...state.sources] : ['Modrinth', 'Spigot'];
   const tasks = selectedSources.map((source) => source === 'Modrinth' ? fetchModrinth(nextPage) : fetchSpigot(nextPage));
   try {
@@ -73,7 +72,6 @@ async function loadPlugins(reset) {
     nextPage += 1;
     render();
     $('#loadMoreWrap').hidden = batches.every((batch) => batch.length === 0) || plugins.length === 0;
-    updateLiveStatus(`${plugins.length.toLocaleString()} live results loaded`);
   } catch (error) {
     if (currentRequest === requestId) renderError(error);
   } finally { loading = false; }
@@ -192,7 +190,6 @@ function removeActiveFilter(group, value) {
 
 function renderLoading() { $('#resultsGrid').innerHTML = `<div class="empty-state loading-state"><i data-lucide="loader-circle"></i><h3>Searching live plugin indexes...</h3><p>Pulling current results from Modrinth and Spigot.</p></div>`; $('#loadMoreWrap').hidden = true; if (window.lucide) lucide.createIcons(); }
 function renderError(error) { $('#resultsGrid').innerHTML = `<div class="empty-state"><i data-lucide="wifi-off"></i><h3>Live sources could not be reached.</h3><p>${error.message}. Check your connection and try again.</p><button class="clear-filters" onclick="loadPlugins(true)">Try again</button></div>`; $('#loadMoreWrap').hidden = true; if (window.lucide) lucide.createIcons(); }
-function updateLiveStatus(message) { const status = $('#liveStatus'); if (status) status.textContent = message; }
 
 function pluginCard(plugin) {
   const saved = state.saved.has(plugin.id);
@@ -202,7 +199,7 @@ function pluginCard(plugin) {
   return `<article class="plugin-card" data-plugin="${plugin.id}"><div class="card-top"><span class="plugin-icon ${plugin.iconClass}">${icon}</span><div class="card-actions"><button data-save="${plugin.id}" class="${saved ? 'saved' : ''}" title="${saved ? 'Remove from saved' : 'Save plugin'}" aria-label="${saved ? 'Remove from saved' : 'Save plugin'}"><i data-lucide="bookmark"></i></button><button title="Open plugin details" aria-label="Open plugin details"><i data-lucide="arrow-up-right"></i></button></div></div><h3>${escapeHtml(plugin.name)}</h3><p class="description">${escapeHtml(plugin.description)}</p><div class="meta-row"><span title="${escapeHtml(downloadText)}"><i data-lucide="download"></i>${escapeHtml(downloadText)}</span><span title="Updated ${escapeHtml(exactDate)}"><i data-lucide="clock-3"></i>${plugin.updated}</span></div><div class="card-bottom"><span class="source-name"><i class="source-dot ${(plugin.sources?.[0] || plugin.source).toLowerCase()}"></i>${plugin.source}</span><span class="price-tag ${plugin.price === 'Free' ? 'free' : 'paid'}">${plugin.price}</span></div></article>`;
 }
 function escapeHtml(value) { return String(value).replace(/[&<>"']/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[character]); }
-function toggleSaved(id) { if (state.saved.has(id)) state.saved.delete(id); else state.saved.add(id); render(); toast(state.saved.has(id) ? 'Plugin saved to your workspace' : 'Plugin removed from saved'); }
+function toggleSaved(id) { if (state.saved.has(id)) state.saved.delete(id); else state.saved.add(id); render(); }
 function clearFilters() { state.sources.clear(); state.platforms.clear(); state.editions.clear(); state.prices.clear(); state.version = 'all'; state.quick = 'all'; $('#versionFilter').value = 'all'; $$('.chip').forEach((item) => item.classList.toggle('active', item.dataset.quick === 'all')); $$('.source-tab').forEach((item) => item.classList.toggle('active', item.dataset.source === 'all')); syncCheckboxes(); loadPlugins(true); }
 function syncCheckboxes() { $$('input[data-filter]').forEach((input) => { const target = state[`${input.dataset.filter}s`]; input.checked = target?.has(input.value) || false; }); }
 function openDrawer(id) {
@@ -219,12 +216,10 @@ function openDrawer(id) {
   $('#downloadAction').addEventListener('click', () => {
     if ($('#downloadMode').value === 'copy') {
       navigator.clipboard?.writeText(plugin.url);
-      toast('Download link copied');
       return;
     }
     window.open(plugin.url, '_blank', 'noopener');
   });
 }
 function closeDrawer() { $('#detailsDrawer').classList.remove('open'); $('#detailsDrawer').setAttribute('aria-hidden', 'true'); setTimeout(() => { $('#drawerBackdrop').hidden = true; }, 250); }
-let toastTimer; function toast(message) { const element = $('#toast'); element.textContent = message; element.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => element.classList.remove('show'), 2200); }
 init();
